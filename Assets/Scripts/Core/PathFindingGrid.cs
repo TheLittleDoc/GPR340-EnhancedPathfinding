@@ -16,8 +16,8 @@ public struct Node
 
 public class PathFindingGrid : MonoBehaviour
 {
-    int width = 5;
-    int height = 5;
+    public int width = 5;
+    public int height = 5;
 
     float gridSpacing = 5;
 
