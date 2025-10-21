@@ -7,10 +7,10 @@ namespace Algos
     {
         
         // Input points
-        protected List<Vector3> _inputPoints = new List<Vector3>();
-        protected List<Vector3> _outputPoints = new List<Vector3>();
+        protected List<Vector2> _inputPoints = new List<Vector2>();
+        protected List<Vector2> _outputPoints = new List<Vector2>();
         
-        public virtual List<Vector3> Smooth(List<Vector3> inputPoints)
+        public virtual List<Vector2> Smooth(List<Vector2> inputPoints, int steps)
         {
             _inputPoints.Clear();
             _inputPoints = inputPoints;
