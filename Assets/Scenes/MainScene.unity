@@ -1321,7 +1321,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.51
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -2730,6 +2730,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1766384055}
   - component: {fileID: 1766384054}
+  - component: {fileID: 1766384057}
+  - component: {fileID: 1766384056}
   m_Layer: 0
   m_Name: ScriptHolder
   m_TagString: Untagged
@@ -2751,6 +2753,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 5
   height: 5
+  blocker: {fileID: 4270242939777026934, guid: 58acdd564e42a9b4bac08da626bdb875, type: 3}
   debugParticle: {fileID: 3335501574806113559, guid: ba49fd7ce95ea754d98c5219800ff04e, type: 3}
 --- !u!4 &1766384055
 Transform:
@@ -2767,6 +2770,36 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1766384056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1766384053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 162a397d3bd14bf428ec4abf3765b617, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 1766384054}
+  settingSpawn: 0
+  settingGoal: 0
+--- !u!114 &1766384057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1766384053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d2b01a61385a8b46b975bd36c9ce340, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 1766384054}
+  widthInput: {fileID: 1159445428}
+  heightInput: {fileID: 1613672255}
 --- !u!1 &1797040334
 GameObject:
   m_ObjectHideFlags: 0
