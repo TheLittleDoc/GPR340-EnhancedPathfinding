@@ -23,7 +23,7 @@ public class MouseInteractions : MonoBehaviour
             //raytrace to grid at mouse pos
             //get nearest grid node by position
             Vector3 screenMousePos = Input.mousePosition;
-            screenMousePos.z = 0.0f;
+            screenMousePos.z = 18.0f;
             Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(screenMousePos);
 
             if (settingSpawn)

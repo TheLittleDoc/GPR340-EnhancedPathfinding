@@ -6,6 +6,7 @@ using TMPro;
 public class ButtonHandler : MonoBehaviour
 {
     public PathFindingGrid grid;
+    public MouseInteractions mouseScript;
     public TMP_InputField widthInput;
     public TMP_InputField heightInput;
 
@@ -37,12 +38,14 @@ public class ButtonHandler : MonoBehaviour
         }
     }
 
-    void toggleSpawnPlacing()
+    public void toggleSpawnPlacing()
     {
-
+        mouseScript.settingSpawn = true;
+        mouseScript.settingGoal = false;
     }
-    void toggleGoalPlacing()
+    public void toggleGoalPlacing()
     {
-
+        mouseScript.settingSpawn = false;
+        mouseScript.settingGoal = true;
     }
 }
