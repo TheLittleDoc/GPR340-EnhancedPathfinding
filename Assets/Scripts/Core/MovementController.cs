@@ -8,6 +8,9 @@ public class MovementController : MonoBehaviour
     List<Vector3> points = new List<Vector3>();
 
     private Smoothing smoothing;
+
+    private List<Vector2> _interpolatedPoints;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,19 +24,34 @@ public class MovementController : MonoBehaviour
         {
             flatPoints.Add(new Vector2(point.x, point.z));
         }
-        List<Vector2> interpolatedPoints = smoothing.Smooth(flatPoints, 32);
+        _interpolatedPoints = smoothing.Smooth(flatPoints, 32);
+        
         string output = "";
-        foreach (Vector2 point in interpolatedPoints)
+        foreach (Vector2 point in _interpolatedPoints)
         {
             output += point.ToString();
             output += ",";
         }
         Debug.Log(output);
+        transform.position = _interpolatedPoints[0];
+        // animate one point per second
+        StartCoroutine(Co_FollowPath());
     }
 
     // Update is called once per frame
     void Update()
     {
+
+    }
+
+    IEnumerator Co_FollowPath()
+    {
+        var steps = _interpolatedPoints.Count;
+        for (int i = 0; i <= steps; i++)
+        {
+            yield return new WaitForSeconds(1);
+            transform.position = _interpolatedPoints[i];
+        }
         
     }
 }
