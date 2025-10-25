@@ -26,7 +26,7 @@ public class PathFindingGrid : MonoBehaviour
     float hiddenY = -50.0f;
     float visibleY = 1.0f;
 
-    int spawnIndex = 0;
+    public int spawnIndex = 0;
     public int goalIndex;
 
     float gridSpacing = 5;
@@ -109,13 +109,48 @@ public class PathFindingGrid : MonoBehaviour
         }
         return index;
     }
+    public Vector3 indexPosition(int index)
+    {
+        return new Vector3(grid[index].pos.x, 0.0f, grid[index].pos.y);
+    }
 
     public void getValidNeighbors(int index, List<int> list)
     {
-
+        if (index + 1 < grid.Count -1)
+        {
+            if (!grid[index+1].blocked)
+            {
+                list.Add(index + 1);
+            }
+        }
+        if (index + height < grid.Count - 1)
+        {
+            if (!grid[index + height].blocked)
+            {
+                list.Add(index + height);
+            }
+        }
+        if (index - 1 > 0)
+        {
+            if (!grid[index - 1].blocked)
+            {
+                list.Add(index + 1);
+            }
+        }
+        if (index - height > 0)
+        {
+            if (!grid[index - height].blocked)
+            {
+                list.Add(index + height);
+            }
+        }
     }
     public int getDist(int i1, int i2)
     {
+        if(i1 < 0 || i1 > width * height - 1 || i2 < 0 || i2 > width * height - 1)
+        {
+            Debug.Log("WTF");
+        }    
         return (int)(Mathf.Abs(grid[i1].pos.x - grid[i2].pos.x) + Mathf.Abs(grid[i1].pos.y - grid[i2].pos.y));
     }
 

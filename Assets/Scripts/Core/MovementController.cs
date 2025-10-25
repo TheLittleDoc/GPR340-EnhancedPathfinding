@@ -5,7 +5,17 @@ using UnityEngine;
 
 public class MovementController : MonoBehaviour
 {
+    float speed = 1.0f;
+    public float progress = 1.0f;
+    public PathFindingGrid grid;
+    public Pathfinding pathfinder;
+
     List<Vector3> points = new List<Vector3>();
+    //temporary pathfind testers
+    Vector3 to;
+    public Vector3 from;
+
+    public bool active = false;
 
     private Smoothing smoothing;
     // Start is called before the first frame update
@@ -34,6 +44,22 @@ public class MovementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(active)
+        {
+            progress += Time.deltaTime * speed;
+
+            if(progress >= 1.0f)
+            {
+                from = to;
+                to = grid.indexPosition(pathfinder.calculatePath());
+                if(to == from)
+                {
+                    active = false;
+                    return;
+                }
+                progress = 0.0f;
+            }
+            this.transform.position = Vector3.Lerp(from, to, progress);
+        }
     }
 }

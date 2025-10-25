@@ -24,11 +24,13 @@ public class Pathfinding : MonoBehaviour
     // Get world data, run algorithm
     public PathFindingGrid grid;
 
-    Location goal;
+    Location goal = new Location();
+    Location next = new Location();
 
     List<int> toExplore = new List<int>();
-    Dictionary<int, Location> exploring;
-    Dictionary<int, Location> explored;
+    Dictionary<int, Location> exploring = new Dictionary<int, Location>();
+    Dictionary<int, Location> explored = new Dictionary<int, Location>();
+    int preAddition = 0;
 
     private Vector3 _location;
     Dictionary<Vector3, Vector3> _path = new Dictionary<Vector3, Vector3>();
@@ -44,11 +46,6 @@ public class Pathfinding : MonoBehaviour
     {
         //update goal from grid
         goal.index = grid.goalIndex;
-
-        //check if we are moving to our previously defined position and that position is unblocked
-
-        //if we need next position to go to run the pathfinding
-        calculatePath();
     }
 
     void GetPosition()
@@ -56,10 +53,30 @@ public class Pathfinding : MonoBehaviour
         _location = transform.position;
     }
 
-    void calculatePath()
+    int addIndexSorted(List<int> list, int index, int costE)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (costE < exploring[list[i]].costEstimated)
+            {
+                list.Insert(i, index);
+                if(i <= preAddition)
+                {
+                    return 1;
+                }
+                return 0;
+            }
+        }
+        list.Add(index);
+        return 0;
+    }
+
+    public int calculatePath()
     {
         //reset
         toExplore.Clear();
+        exploring.Clear();
+        explored.Clear();
 
         //intialize
         int start = grid.indexAtPoint(transform.position);
@@ -73,7 +90,9 @@ public class Pathfinding : MonoBehaviour
         while (exploring[toExplore[0]].costEstimated < goal.costSoFar)
         {
             current = exploring[toExplore[0]];
+            preAddition = 0;
 
+            nearby.Clear();
             grid.getValidNeighbors(current.index, nearby);
 
             foreach (int i in nearby)
@@ -91,7 +110,7 @@ public class Pathfinding : MonoBehaviour
                     }
 
                     exploring.Add(i, neighbor);
-                    //sorted addition to to search
+                    preAddition += addIndexSorted(toExplore, i, neighbor.costEstimated);
                     explored.Remove(i);
                 }
                 else if (exploring.ContainsKey(i))
@@ -107,7 +126,7 @@ public class Pathfinding : MonoBehaviour
                 else
                 {
                     exploring.Add(i, neighbor);
-                    //sorted addition to to search
+                    preAddition += addIndexSorted(toExplore, i, neighbor.costEstimated);
 
                 }
             }
@@ -115,13 +134,23 @@ public class Pathfinding : MonoBehaviour
             //add to explord, remove from exploring and search
             explored.Add(current.index, current);
             exploring.Remove(current.index);
-            toExplore.RemoveAt(0);
+            toExplore.RemoveAt(0 + preAddition);
 
             //check if goal inaccessible somewhere here
         }
 
         //best route should now be found
+        int posI = grid.indexAtPoint(transform.position);
+        int check0 = goal.index;
+        int check1 = goal.fromIndex;
+        while(check1 != posI)
+        {
+            check0 = check1;
+            check1 = explored[check0].fromIndex;
+        }
 
+        next = explored[check0];
+        return next.index;
     }
     
     

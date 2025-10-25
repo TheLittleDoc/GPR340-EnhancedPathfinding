@@ -7,6 +7,7 @@ public class ButtonHandler : MonoBehaviour
 {
     public PathFindingGrid grid;
     public MouseInteractions mouseScript;
+    public MovementController movementController;
     public TMP_InputField widthInput;
     public TMP_InputField heightInput;
 
@@ -47,5 +48,13 @@ public class ButtonHandler : MonoBehaviour
     {
         mouseScript.settingSpawn = false;
         mouseScript.settingGoal = true;
+    }
+
+    public void startAgent()
+    {
+        movementController.active = true;
+        movementController.from = grid.indexPosition(grid.spawnIndex);
+        movementController.transform.position = movementController.from + new Vector3(0.0f, 1.0f, 0.0f);
+        movementController.progress = 1.0f;
     }
 }
