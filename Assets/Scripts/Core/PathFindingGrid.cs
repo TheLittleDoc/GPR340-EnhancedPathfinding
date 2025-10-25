@@ -27,7 +27,7 @@ public class PathFindingGrid : MonoBehaviour
     float visibleY = 1.0f;
 
     int spawnIndex = 0;
-    int goalIndex;
+    public int goalIndex;
 
     float gridSpacing = 5;
 
@@ -91,7 +91,7 @@ public class PathFindingGrid : MonoBehaviour
         }
     }
 
-    int indexAtPoint(Vector3 pos)
+    public int indexAtPoint(Vector3 pos)
     {
         int index = 0;
         float xDist = 1000.0f, zDist = 1000.0f;
@@ -108,6 +108,15 @@ public class PathFindingGrid : MonoBehaviour
             }
         }
         return index;
+    }
+
+    public void getValidNeighbors(int index, List<int> list)
+    {
+
+    }
+    public int getDist(int i1, int i2)
+    {
+        return (int)(Mathf.Abs(grid[i1].pos.x - grid[i2].pos.x) + Mathf.Abs(grid[i1].pos.y - grid[i2].pos.y));
     }
 
     //enable or disable the blocker at node
