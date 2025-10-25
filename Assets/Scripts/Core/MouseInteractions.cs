@@ -23,22 +23,27 @@ public class MouseInteractions : MonoBehaviour
             //raytrace to grid at mouse pos
             //get nearest grid node by position
             Vector3 screenMousePos = Input.mousePosition;
-            screenMousePos.z = 18.0f;
+            screenMousePos.z = Camera.main.transform.position.y;
             Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(screenMousePos);
 
             if (settingSpawn)
             {
                 //setSpawn as grid node
                 grid.setSpawn(worldMousePos);
+                settingSpawn = false;
             }
-            if(settingGoal)
+            else if(settingGoal)
             {
                 //set goal as grid node
                 grid.SetGoal(worldMousePos);
+                settingGoal = false;
+            }
+            else
+            {
+                //toggle block of gridmode and  enable / disable the cube
+                grid.toggleNode(worldMousePos);
             }
 
-            //toggle block of gridmode and  enable / disable the cube
-            grid.toggleNode(worldMousePos);
         }
     }
 }

@@ -32,11 +32,12 @@ public class PathFindingGrid : MonoBehaviour
     float gridSpacing = 5;
 
     public GameObject blocker;
+    public GameObject worldCanvas;
     public GameObject debugParticle;
     public GameObject spawnEffect, goalEffect;
 
     List<Node> grid;
-    List<GameObject> blockers;
+    List<GameObject> blockers, points;
     // Start is called before the first frame update
     void Start()
     {
@@ -54,12 +55,21 @@ public class PathFindingGrid : MonoBehaviour
     {
         if (reset)
         {
+            for (int i = 0; i < grid.Count; i++)
+            {
+                
+                Destroy(blockers[i]);
+                Destroy(points[i]);
+            }
+
             grid.Clear();
             blockers.Clear();
+            points.Clear();
         }
 
         grid = new List<Node>(width * height);
         blockers = new List<GameObject>();
+        points = new List<GameObject>();
         //Debug.Log(width * height + " / " + grid.Capacity);
         for (int x = -width / 2; x <= width / 2; x++)
         {
@@ -70,13 +80,14 @@ public class PathFindingGrid : MonoBehaviour
             }
         }
         spawnIndex = 0;
-        goalIndex = width * height;
+        spawnEffect.transform.position = new Vector3(grid[spawnIndex].pos.x, 0.5f, grid[spawnIndex].pos.y);
+        goalIndex = width * height - 1;
+        goalEffect.transform.position = new Vector3(grid[goalIndex].pos.x, 0.5f, grid[goalIndex].pos.y);
 
         //this is just debug to see gridpoints
         foreach (Node node in grid)
         {
-            //Instantiate(debugParticle, new Vector3(node.pos.x, 0.0f, node.pos.y), Quaternion.identity);
-            //Replace with new image thing
+            points.Add(Instantiate(debugParticle, new Vector3(node.pos.x, 0.0f, node.pos.y), Quaternion.identity, worldCanvas.transform));
         }
     }
 
@@ -96,7 +107,6 @@ public class PathFindingGrid : MonoBehaviour
                 index = i;
             }
         }
-        Debug.Log(index);
         return index;
     }
 
@@ -128,7 +138,7 @@ public class PathFindingGrid : MonoBehaviour
     {
         int index = indexAtPoint(nearestPos);
         goalIndex = index;
-        goalEffect.transform.position = new Vector3(grid[spawnIndex].pos.x, 0.5f, grid[spawnIndex].pos.y);
+        goalEffect.transform.position = new Vector3(grid[goalIndex].pos.x, 0.5f, grid[goalIndex].pos.y);
     }
 
     public void setWidth(int widthIn)
