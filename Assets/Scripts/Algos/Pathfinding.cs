@@ -23,13 +23,14 @@ public class Pathfinding : MonoBehaviour
 {
     // Get world data, run algorithm
     public PathFindingGrid grid;
+    public GameObject pawn;
 
     Location goal = new Location();
     Location next = new Location();
 
     List<int> toExplore = new List<int>();
     Dictionary<int, Location> exploring = new Dictionary<int, Location>();
-    Dictionary<int, Location> explored = new Dictionary<int, Location>();
+    public Dictionary<int, Location> explored = new Dictionary<int, Location>();
     int preAddition = 0;
 
     private Vector3 _location;
@@ -71,7 +72,7 @@ public class Pathfinding : MonoBehaviour
         return 0;
     }
 
-    public int calculatePath()
+    public void calculatePath()
     {
         //reset
         toExplore.Clear();
@@ -79,7 +80,7 @@ public class Pathfinding : MonoBehaviour
         explored.Clear();
 
         //intialize
-        int start = grid.indexAtPoint(transform.position);
+        int start = grid.indexAtPoint(pawn.transform.position);
         toExplore.Add(start);
         exploring.Add(start, new Location(start, start, 0, 0));
         goal.costSoFar = 100000;
@@ -101,6 +102,14 @@ public class Pathfinding : MonoBehaviour
 
                 //manhattan distance. do we need additional hueristic?
                 neighbor.costEstimated = grid.getDist(i, goal.index);
+
+                if(neighbor.index == goal.index)
+                {
+                    if(neighbor.costSoFar <= goal.costSoFar)
+                    {
+                        goal = neighbor;
+                    }
+                }
 
                 if (explored.ContainsKey(i))
                 {
@@ -137,10 +146,14 @@ public class Pathfinding : MonoBehaviour
             toExplore.RemoveAt(0 + preAddition);
 
             //check if goal inaccessible somewhere here
+            if(exploring.Count == 0 || toExplore.Count == 0)
+            {
+                Debug.Log("Search emptied");
+            }
         }
 
         //best route should now be found
-        int posI = grid.indexAtPoint(transform.position);
+        int posI = grid.indexAtPoint(pawn.transform.position);
         int check0 = goal.index;
         int check1 = goal.fromIndex;
         while(check1 != posI)
@@ -150,7 +163,6 @@ public class Pathfinding : MonoBehaviour
         }
 
         next = explored[check0];
-        return next.index;
     }
     
     

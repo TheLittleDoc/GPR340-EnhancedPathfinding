@@ -51,7 +51,7 @@ public class MovementController : MonoBehaviour
             if(progress >= 1.0f)
             {
                 from = to;
-                to = grid.indexPosition(pathfinder.calculatePath());
+                //THIS IS BROKEN
                 if(to == from)
                 {
                     active = false;
@@ -61,5 +61,10 @@ public class MovementController : MonoBehaviour
             }
             this.transform.position = Vector3.Lerp(from, to, progress);
         }
+    }
+
+    public void spawnTeleport()
+    {
+        this.transform.position = grid.indexPosition(grid.spawnIndex);
     }
 }

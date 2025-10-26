@@ -2,20 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Node
 {
     public Vector2 pos;
     public bool blocked;
+    public bool path;
 
     public Node(float x , float y)
     {
         pos = new Vector2 (x, y);
         blocked = false;
+        path = false;
     }
     public void toggleBlock()
     {
         blocked = !blocked;
+    }
+    public void togglePath()
+    {
+        path = !path;
     }
 }
 
@@ -23,6 +30,7 @@ public class PathFindingGrid : MonoBehaviour
 {
     public int width = 5;
     public int height = 5;
+    int gridsize;
     float hiddenY = -50.0f;
     float visibleY = 1.0f;
 
@@ -38,6 +46,8 @@ public class PathFindingGrid : MonoBehaviour
 
     List<Node> grid;
     List<GameObject> blockers, points;
+
+    public Sprite normal, path;
     // Start is called before the first frame update
     void Start()
     {
@@ -83,6 +93,7 @@ public class PathFindingGrid : MonoBehaviour
         spawnEffect.transform.position = new Vector3(grid[spawnIndex].pos.x, 0.5f, grid[spawnIndex].pos.y);
         goalIndex = width * height - 1;
         goalEffect.transform.position = new Vector3(grid[goalIndex].pos.x, 0.5f, grid[goalIndex].pos.y);
+        gridsize = width * height;
 
         //this is just debug to see gridpoints
         foreach (Node node in grid)
@@ -116,32 +127,32 @@ public class PathFindingGrid : MonoBehaviour
 
     public void getValidNeighbors(int index, List<int> list)
     {
-        if (index + 1 < grid.Count -1)
+        if (index + 1 < gridsize)
         {
-            if (!grid[index+1].blocked)
+            if (!grid[index+1].blocked && index% height != height - 1)
             {
                 list.Add(index + 1);
             }
         }
-        if (index + height < grid.Count - 1)
+        if (index + height < gridsize)
         {
             if (!grid[index + height].blocked)
             {
                 list.Add(index + height);
             }
         }
-        if (index - 1 > 0)
+        if (index - 1 >= 0)
         {
-            if (!grid[index - 1].blocked)
+            if (!grid[index - 1].blocked && index % height != 0)
             {
-                list.Add(index + 1);
+                list.Add(index - 1);
             }
         }
-        if (index - height > 0)
+        if (index - height >= 0)
         {
             if (!grid[index - height].blocked)
             {
-                list.Add(index + height);
+                list.Add(index - height);
             }
         }
     }
@@ -169,6 +180,36 @@ public class PathFindingGrid : MonoBehaviour
             blockers[index].transform.position = new Vector3(blockers[index].transform.position.x, visibleY, blockers[index].transform.position.z);
             grid[index].toggleBlock();
         }
+    }
+
+    void showPath()
+    {
+        for (int i = 0; i < grid.Count; i++)
+        {
+            if (grid[i].path)
+            {
+                points[i].transform.GetChild(0).GetComponent<Image>().sprite = path;
+            }
+            else
+            {
+                points[i].transform.GetChild(0).GetComponent<Image>().sprite = normal;
+            }
+        }
+    }
+    public void setPath(List<int> pathIn)
+    {
+        for (int i = 0; i < grid.Count; i++)
+        {
+            if(pathIn.Contains(i))
+            {
+                grid[i].path = true;
+            }
+            else
+            {
+                grid[i].path = false;
+            }
+        }
+            showPath();
     }
 
     public void setSpawn(Vector3 nearestPos)
