@@ -101,13 +101,16 @@ public class Pathfinding : MonoBehaviour
                 Location neighbor = new Location(i, current.index, current.costSoFar + 1, 0);
 
                 //manhattan distance. do we need additional hueristic?
-                neighbor.costEstimated = grid.getDist(i, goal.index);
+                neighbor.costEstimated = neighbor.costSoFar + grid.getDist(i, goal.index);
 
                 if(neighbor.index == goal.index)
                 {
                     if(neighbor.costSoFar <= goal.costSoFar)
                     {
                         goal = neighbor;
+                        exploring.Add(neighbor.index, neighbor);
+                        explored.Add(neighbor.index, neighbor);
+                        preAddition += addIndexSorted(toExplore, i, neighbor.costEstimated);
                     }
                 }
 
