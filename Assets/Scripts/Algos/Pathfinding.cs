@@ -26,7 +26,7 @@ public class Pathfinding : MonoBehaviour
     public GameObject pawn;
 
     Location goal = new Location();
-    Location next = new Location();
+    public Location next = new Location();
 
     List<int> toExplore = new List<int>();
     Dictionary<int, Location> exploring = new Dictionary<int, Location>();

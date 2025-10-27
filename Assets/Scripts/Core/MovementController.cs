@@ -6,7 +6,7 @@ using UnityEngine;
 public class MovementController : MonoBehaviour
 {
     float speed = 1.0f;
-    public float progress = 1.0f;
+    public float progress = 0.0f;
     public PathFindingGrid grid;
     public Pathfinding pathfinder;
 
@@ -16,6 +16,7 @@ public class MovementController : MonoBehaviour
     public Vector3 from;
 
     public bool active = false;
+    bool lastMove = false;
 
     private Smoothing smoothing;
     // Start is called before the first frame update
@@ -50,14 +51,21 @@ public class MovementController : MonoBehaviour
 
             if(progress >= 1.0f)
             {
-                from = to;
-                //THIS IS BROKEN
-                if(to == from)
+                if (lastMove)
                 {
                     active = false;
+                    lastMove = false;
                     return;
                 }
+                from = to;
+                pathfinder.calculatePath();
+                to = grid.indexPosition(pathfinder.next.index);
+                if (to == grid.indexPosition(grid.goalIndex))
+                {
+                    lastMove = true;
+                }
                 progress = 0.0f;
+
             }
             this.transform.position = Vector3.Lerp(from, to, progress);
         }
@@ -66,5 +74,7 @@ public class MovementController : MonoBehaviour
     public void spawnTeleport()
     {
         this.transform.position = grid.indexPosition(grid.spawnIndex);
+        from = this.transform.position;
+        to = from;
     }
 }
