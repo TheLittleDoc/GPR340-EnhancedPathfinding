@@ -49,6 +49,7 @@ public class Pathfinding : MonoBehaviour
         goal.index = grid.goalIndex;
     }
 
+
     void GetPosition()
     {
         _location = transform.position;

@@ -6,51 +6,63 @@ namespace Algos
 {
     struct Segment
     {
-        public Vector2 a;
-        public Vector2 b;
-        public Vector2 c;
-        public Vector2 d;
+        public Vector3 a;
+        public Vector3 b;
+        public Vector3 c;
+        public Vector3 d;
     }
     public class Bezier : Smoothing
     {
-        public override List<Vector2> Smooth(List<Vector2> inputPoints, int steps)
+        public double alpha = 0.5;
+        public double tension = 0;
+        public override List<Vector3> Smooth(List<Vector3> inputPoints, int steps)
         {
-            Vector2 p0 = inputPoints[0];
-            Vector2 p1 = inputPoints[1];
-            Vector2 p2 = inputPoints[2];
-            Vector2 p3 = inputPoints[3];
-            double alpha = 0.5;
-            double tension = 0;
+            this.steps = steps;
             _inputPoints = inputPoints;
             float t = 0;
             
-            double t01 = Math.Pow(Vector2.Distance(_inputPoints[0], _inputPoints[1]), alpha);
-            double t12 = Math.Pow(Vector2.Distance(_inputPoints[1], _inputPoints[2]), alpha);
-            double t23 = Math.Pow(Vector2.Distance(_inputPoints[2], _inputPoints[3]), alpha);
-
-            Vector2 m1 = (float)(1.0 - tension) * 
-                         (p2 - p1 + (float)t12 * ((p1 - p0) / (float)t01 - (p2 - p0) / (float)(t01 + t12)));
-            Vector2 m2 = (float)(1.0 - tension) *
-                         (p2 - p1 + (float)t12 * ((p3 - p2) / (float)t23 - (p3 - p1) / (float)(t12 + t23)));
-            
-            Segment segment;
-            segment.a = 2.0f * (p1 - p2) + m1 + m2;
-            segment.b = -3.0f * (p1 - p2) - m1 - m1 - m2;
-            segment.c = m1;
-            segment.d = p1;
-            
-            while (t <= 1)
+            for (int i = 0; i < _inputPoints.Count - 1; i++)
             {
-                Vector2 point =  segment.a * t * t * t +
-                                 segment.b * t * t +
-                                 segment.c * t +
-                                 segment.d;
-                _outputPoints.Add(point);
-                t += 1 / (float)steps;
+                Segment segment;
+                segment.a = i == 0 ? _inputPoints[i] : _inputPoints[i - 1];
+                segment.b = _inputPoints[i];
+                segment.c = _inputPoints[i + 1];
+                segment.d = i + 2 < _inputPoints.Count ? _inputPoints[i + 2] : _inputPoints[i + 1];
+                for (int j = 0; j <= steps; j++)
+                {
+                    t = j / (float)steps;
+                    Vector3 point = calculateCatmulRomPoint(segment.a, segment.b, segment.c, segment.d, t);
+                    _outputPoints.Add(point);
+                }
             }
+            _outputPoints.Add(_inputPoints[_inputPoints.Count - 1]);
             
             
             return _outputPoints;
+        }
+
+        public Vector3 calculateCatmulRomPoint(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+        {
+            float t2 = t * t;
+            float t3 = t2 * t;
+            
+            double t01 = Math.Pow(Vector3.Distance(_inputPoints[0], _inputPoints[1]), alpha);
+            double t12 = Math.Pow(Vector3.Distance(_inputPoints[1], _inputPoints[2]), alpha);
+            double t23 = Math.Pow(Vector3.Distance(_inputPoints[2], _inputPoints[3]), alpha);
+            
+            var splineFactor = 0.5f * (1 - tension);
+            
+            Vector3 m1 = (float)(1.0 - splineFactor) * 
+                         (p2 - p1 + (float)t12 * ((p1 - p0) / (float)t01 - (p2 - p0) / (float)(t01 + t12)));
+            Vector3 m2 = (float)(1.0 - splineFactor) *
+                         (p2 - p1 + (float)t12 * ((p3 - p2) / (float)t23 - (p3 - p1) / (float)(t12 + t23)));
+            
+            Vector3 point = (2 * p1 - 2 * p2 + m1 + m2) * t3 +
+                            (-3 * p1 + 3 * p2 - 2 * m1 - m2) * t2 +
+                            m1 * t +
+                            p1;
+
+            return point;
         }
         
         

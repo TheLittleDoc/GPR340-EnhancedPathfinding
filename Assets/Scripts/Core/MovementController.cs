@@ -11,35 +11,22 @@ public class MovementController : MonoBehaviour
     public Pathfinding pathfinder;
 
     List<Vector3> points = new List<Vector3>();
+    List<Vector3> splinePoints = new List<Vector3>();
     //temporary pathfind testers
     Vector3 to;
     public Vector3 from;
 
+    private Vector3 fromSpline;
+    private Vector3 toSpline;
+
     public bool active = false;
     bool lastMove = false;
+    private int step = 0;
 
-    private Smoothing smoothing;
+    [SerializeField] private Smoothing smoothing;
     // Start is called before the first frame update
     void Start()
     {
-        smoothing = GetComponent<Smoothing>();
-        points.Add(transform.position);
-        points.Add(transform.position + Vector3.left);
-        points.Add(points[1] + Vector3.forward);
-        points.Add(points[2] + Vector3.left);
-        List<Vector2> flatPoints = new List<Vector2>();
-        foreach (Vector3 point in points)
-        {
-            flatPoints.Add(new Vector2(point.x, point.z));
-        }
-        List<Vector2> interpolatedPoints = smoothing.Smooth(flatPoints, 32);
-        string output = "";
-        foreach (Vector2 point in interpolatedPoints)
-        {
-            output += point.ToString();
-            output += ",";
-        }
-        Debug.Log(output);
     }
 
     // Update is called once per frame
@@ -48,7 +35,7 @@ public class MovementController : MonoBehaviour
         if(active)
         {
             progress += Time.deltaTime * speed;
-
+            step = smoothing.steps * (int)(smoothing.steps * progress);
             if(progress >= 1.0f)
             {
                 if (lastMove)
@@ -58,8 +45,19 @@ public class MovementController : MonoBehaviour
                     return;
                 }
                 from = to;
+                fromSpline = toSpline;
                 pathfinder.calculatePath();
+                splinePoints.Clear();
+                
+                splinePoints = smoothing.Smooth(grid.getPathList(), 25);
+                string splineMessage = "Spline Points: ";
+                foreach (Vector3 v in splinePoints)
+                {
+                    splineMessage += v.ToString() + ", ";
+                }
+                Debug.Log(splineMessage);
                 to = grid.indexPosition(pathfinder.next.index);
+                toSpline = splinePoints[splinePoints.Count - 1];
                 if (to == grid.indexPosition(grid.goalIndex))
                 {
                     lastMove = true;
@@ -67,7 +65,7 @@ public class MovementController : MonoBehaviour
                 progress = 0.0f;
 
             }
-            this.transform.position = Vector3.Lerp(from, to, progress);
+            transform.position = Vector3.Lerp(fromSpline, toSpline, progress);
         }
     }
 

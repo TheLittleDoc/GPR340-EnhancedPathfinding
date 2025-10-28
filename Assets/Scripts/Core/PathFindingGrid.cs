@@ -47,6 +47,8 @@ public class PathFindingGrid : MonoBehaviour
     List<Node> grid;
     List<GameObject> blockers, points;
 
+    private List<Vector3> pathPoints;
+
     public Sprite normal, path;
     // Start is called before the first frame update
     void Start()
@@ -209,7 +211,7 @@ public class PathFindingGrid : MonoBehaviour
                 grid[i].path = false;
             }
         }
-            showPath();
+        showPath();
     }
 
     public void setSpawn(Vector3 nearestPos)
@@ -233,5 +235,18 @@ public class PathFindingGrid : MonoBehaviour
     public void setHeight(int heightIn) 
     { 
         height = heightIn; 
+    }
+
+    public List<Vector3> getPathList()
+    {
+        List<Vector3> pathList = new List<Vector3>();
+        for (int i = 0; i < grid.Count; i++)
+        {
+            if (grid[i].path)
+            {
+                pathList.Add(new Vector3(grid[i].pos.x, 0.0f, grid[i].pos.y));
+            }
+        }
+        return pathList;
     }
 }
