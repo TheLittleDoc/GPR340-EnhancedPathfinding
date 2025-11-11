@@ -44,3 +44,6 @@ jobs:
         with:
           folder: build/WebGL/WebGL # The folder the action should deploy.
           single-commit: true    
+      - name: Return license
+        uses: game-ci/unity-return-license@v2
+        if: always()
